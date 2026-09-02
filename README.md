@@ -31,7 +31,7 @@ Der Rechner simuliert Monat für Monat, wie ein Sparplan in physisches Gold (in 
 | Startkapital | Einmalzahlung im ersten Monat (Monat 0) |
 | Monatliches Nachschießen | Zusätzlicher Betrag, der ab Monat 1 jeden Monat eingezahlt wird |
 | Planungsdauer | Anzahl der simulierten Monate |
-| Goldpreissteigerung p.a. | Jährliche Preissteigerung, wird **linear** auf Monatsbasis umgerechnet (`multiplier = 1 + growth × (Monat/12)`) |
+| Goldpreissteigerung p.a. | Jährliche Preisänderung, wird **linear** auf Monatsbasis umgerechnet (`multiplier = max(0, 1 + growth × (Monat/12))`). Auch **negative Werte** (z. B. `-20` für ein Szenario mit −20 % p.a.) sind erlaubt, um einen sinkenden Goldpreis durchzurechnen; der Multiplikator ist bei 0 nach unten begrenzt, damit auch bei starkem, lang anhaltendem Rückgang keine negativen Preise entstehen |
 | Startmonat | Kalendermonat von Monat 0 |
 | Strategie | Siehe unten |
 
