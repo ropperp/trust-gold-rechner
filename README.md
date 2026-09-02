@@ -79,16 +79,31 @@ Für jeden Monat `m` von `0` bis `duration`:
 
 ### Ergebnis-Kennzahlen (Abschnitt 3)
 
-- **Guthaben nach Ablauf**: Bargeld-Saldo am Ende der Planungsdauer.
-- **Gold in laufenden Verträgen** / **Geschätzter Goldwert**: Gold, das am Planungsende noch in nicht fälligen Verträgen gebunden ist, in Gramm bzw. Euro.
-- **Kapital gesamt nach Ablauf**: Guthaben + geschätzter Goldwert der noch laufenden Verträge.
-- **Eigenkapital eingezahlt**: Startkapital + (monatliches Nachschießen × Planungsdauer) – die Summe aller eigenen Einzahlungen.
-- **Gesamtwert / eingesetztes Kapital** und **Guthaben / eingesetztes Kapital**: die beiden vorherigen Werte jeweils im Verhältnis zum eingezahlten Eigenkapital, in Prozent.
+- **Guthaben nach Ablauf**: Bargeld-Saldo am Ende der Planungsdauer. Da nie ein Vertrag eröffnet wird, der nicht mehr innerhalb der Planungsdauer fällig werden kann (siehe Strategien oben), ist am Ende planmäßig kein Gold mehr in offenen Verträgen gebunden – das Guthaben nach Ablauf ist daher zugleich das gesamte Endkapital.
+- **Insgesamt gekauftes Gold**: Summe aller im Planungszeitraum tatsächlich gekauften Barren, in Gramm.
+- **Gesamter Rückkaufserlös**: Summe aller Ankaufserlöse aus fällig gewordenen Verträgen über die gesamte Laufzeit.
 - **Wiederverwendete Rabattgutschriften**: Summe aller monatlichen Rabattgutschriften aus Modell 2/3 über die gesamte Laufzeit.
+- **Eigenkapital eingezahlt**: Startkapital + (monatliches Nachschießen × Planungsdauer) – die Summe aller eigenen Einzahlungen.
+- **Endkapital / eingesetztes Kapital**: Guthaben nach Ablauf im Verhältnis zum eingezahlten Eigenkapital, in Prozent.
+
+*(Frühere Versionen zeigten zusätzlich „Gold in laufenden Verträgen“, „Geschätzter Goldwert“, „Kapital gesamt nach Ablauf“ und „Gesamtwert / eingesetztes Kapital“ – diese vier Werte waren durch die oben beschriebene Fälligkeits-Regel strukturell immer 0 bzw. exakte Duplikate von „Guthaben nach Ablauf“ und wurden deshalb entfernt bzw. durch aussagekräftigere Kennzahlen ersetzt.)*
 
 ### Monatliche Tabelle (Abschnitt 4)
 
-Zeigt für jeden Monat: Datum, aktives Modell, verfügbaren Betrag vor dem Kauf, Nachschuss, Rabattgutschrift, Rückkaufserlös bei Fälligkeit, tatsächlichen Kaufbetrag, Fälligkeitsmonat des neuen Vertrags, Saldo des Verrechnungskontos, Stückzahl je Barrengröße, insgesamt in diesem Monat gekaufte Gramm sowie das zu diesem Zeitpunkt in laufenden Verträgen gebundene Gold samt Schätzwert.
+Zeigt für jeden Monat: Datum, aktives Modell, verfügbaren Betrag vor dem Kauf, Nachschuss, Rabattgutschrift, Rückkaufserlös bei Fälligkeit, tatsächlichen Kaufbetrag, Fälligkeitsmonat des neuen Vertrags, Saldo des Verrechnungskontos, Stückzahl je Barrengröße, insgesamt in diesem Monat gekaufte Gramm sowie das zu diesem Zeitpunkt in laufenden Verträgen gebundene Gold samt Schätzwert (diese beiden letzten Spalten sind für die Zwischenmonate sinnvoll, in der letzten Zeile aber immer 0/€0, siehe oben).
+
+Die Tabelle hat immer `Planungsdauer + 1` Zeilen (Monat 0 bis Monat `Planungsdauer`): Der letzte Monat eröffnet keinen neuen Vertrag mehr, sondern verbucht nur noch die zu diesem Zeitpunkt fälligen Rückkäufe/Gutschriften, damit das Endergebnis vollständig abgerechnet ist.
+
+## Bei der Prüfung gefundene und behobene Punkte
+
+Bei einer genauen Durchsicht der Rechenlogik wurden folgende Punkte korrigiert:
+
+1. **Goldpreissteigerung galt nur beim Rückkauf, nicht beim Kauf.** Die eingegebene jährliche Steigerung wurde bisher ausschließlich auf Rückkaufpreise und die Bewertung laufender Verträge angewendet, nicht aber auf den Preis, zu dem in späteren Monaten neue Barren gekauft werden – neue Barren wurden also immer zum Preis von Monat 0 „gekauft“, obwohl sie laut Modell später und zu höheren Preisen verkauft wurden. Das führte bei jeder Steigerung > 0 % zu einem künstlich zu guten Ergebnis. Der Kaufpreis-Multiplikator wird jetzt konsequent auf beide Seiten angewendet. Bei 0 % Steigerung (Standardeinstellung) ändert sich dadurch nichts an den Ergebnissen.
+2. **„Kapital gesamt nach Ablauf“, „Gold in laufenden Verträgen“ und „Geschätzter Goldwert“ waren am Ende der Planung strukturell immer 0 bzw. Duplikate.** Weil nie ein Vertrag eröffnet wird, der nicht mehr fristgerecht fällig werden kann, gibt es am letzten Monat nie noch offene Verträge – diese Kennzahlen waren also immer 0 (bzw. „Kapital gesamt“ und „Gesamtwert / eingesetztes Kapital“ exakt identisch mit „Guthaben nach Ablauf“ bzw. „Guthaben / eingesetztes Kapital“). Siehe Screenshot-Beispiel: beide Prozentwerte waren immer exakt gleich. Ersetzt durch „Insgesamt gekauftes Gold“ und „Gesamter Rückkaufserlös“, die tatsächlich aussagekräftig sind.
+3. **Verträge mit 0 € Kaufbetrag.** Reichte das verfügbare Geld in einem Monat nicht einmal für den kleinsten 1-g-Barren, wurde trotzdem ein „leerer“ Vertrag mit 0 € Kaufbetrag angelegt und in der Tabelle als aktives Modell angezeigt, obwohl nichts gekauft wurde. Das ist jetzt abgefangen; in einem solchen Monat steht korrekt „Kein neuer Vertrag“.
+4. **Erklärender Hinweis zur zusätzlichen Zeile.** Die Tabelle hatte schon immer eine Zeile mehr als die eingegebene Planungsdauer (Monat 0 bis Monat *Planungsdauer*), weil der letzte Monat nur noch Fälligkeiten abrechnet. Das ist rechnerisch beabsichtigt, wurde aber nirgends erklärt – jetzt gibt es dazu einen Hinweistext direkt über der Tabelle.
+
+**Unverändert, aber zur Kenntnisnahme:** Modell 1 (Sofortrabatt) kauft beim Rückkauf weiterhin zum Verkaufspreis (nicht zum Ankaufspreis) – das wurde bewusst so belassen, da dies laut Rückmeldung den tatsächlichen Konditionen entspricht. Die Kauf-Reihenfolge „größte Barrengröße zuerst“ ist ein bewusster, einfacher Greedy-Ansatz; er ist in der Praxis meist optimal (größere Barren sind pro Gramm günstiger), garantiert aber rechnerisch nicht in jedem Fall die maximale Grammzahl für den eingesetzten Betrag.
 
 ## Hinweise zu späteren Anpassungen
 
