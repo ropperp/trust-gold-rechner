@@ -80,13 +80,13 @@ Für jeden Monat `m` von `0` bis `duration`:
 ### Ergebnis-Kennzahlen (Abschnitt 3)
 
 - **Guthaben nach Ablauf**: Bargeld-Saldo am Ende der Planungsdauer. Da nie ein Vertrag eröffnet wird, der nicht mehr innerhalb der Planungsdauer fällig werden kann (siehe Strategien oben), ist am Ende planmäßig kein Gold mehr in offenen Verträgen gebunden – das Guthaben nach Ablauf ist daher zugleich das gesamte Endkapital.
-- **Insgesamt gekauftes Gold**: Summe aller im Planungszeitraum tatsächlich gekauften Barren, in Gramm.
-- **Gesamter Rückkaufserlös**: Summe aller Ankaufserlöse aus fällig gewordenen Verträgen über die gesamte Laufzeit.
-- **Wiederverwendete Rabattgutschriften**: Summe aller monatlichen Rabattgutschriften aus Modell 2/3 über die gesamte Laufzeit.
+- **Höchster Goldbestand**: Der größte Betrag an physischem Gold (in Gramm), der zu irgendeinem Zeitpunkt der Planung **gleichzeitig** in noch nicht fälligen Verträgen lag, bevor er wieder verkauft wurde. Das ist **keine** Summe aller jemals gekauften Barren – bei kurzlaufenden Modellen (z. B. dem 2-Monats-Sofortrabatt) wird dasselbe Kapital über die Planungsdauer viele Male hintereinander investiert, verkauft und neu investiert; eine reine Summe aller Käufe würde diese Umschichtungen fälschlich als zusätzliches Gold zählen, obwohl real nie mehr als der hier ausgewiesene Spitzenwert gleichzeitig vorhanden war. Direkt darunter wird dieser Spitzenwert zusätzlich je Modell aufgeschlüsselt (Modelle können sich in Kaskaden zeitlich überlappen, siehe unten).
+- **Gesamter Rückkaufserlös**: Summe aller Ankaufserlöse aus fällig gewordenen Verträgen über die gesamte Laufzeit (das ist ein reiner Geldfluss über die Zeit, keine Bestandsgröße – hier ist eine Summe sinnvoll).
+- **Wiederverwendete Rabattgutschriften**: Summe aller monatlichen Rabattgutschriften aus Modell 2/3 über die gesamte Laufzeit (ebenfalls ein Geldfluss, keine Bestandsgröße).
 - **Eigenkapital eingezahlt**: Startkapital + (monatliches Nachschießen × Planungsdauer) – die Summe aller eigenen Einzahlungen.
 - **Endkapital / eingesetztes Kapital**: Guthaben nach Ablauf im Verhältnis zum eingezahlten Eigenkapital, in Prozent.
 
-*(Frühere Versionen zeigten zusätzlich „Gold in laufenden Verträgen“, „Geschätzter Goldwert“, „Kapital gesamt nach Ablauf“ und „Gesamtwert / eingesetztes Kapital“ – diese vier Werte waren durch die oben beschriebene Fälligkeits-Regel strukturell immer 0 bzw. exakte Duplikate von „Guthaben nach Ablauf“ und wurden deshalb entfernt bzw. durch aussagekräftigere Kennzahlen ersetzt.)*
+*(Frühere Versionen zeigten zusätzlich „Gold in laufenden Verträgen“, „Geschätzter Goldwert“, „Kapital gesamt nach Ablauf“ und „Gesamtwert / eingesetztes Kapital“ – diese vier Werte waren durch die oben beschriebene Fälligkeits-Regel strukturell immer 0 bzw. exakte Duplikate von „Guthaben nach Ablauf“ und wurden deshalb entfernt. Eine weitere Zwischenversion zeigte „Insgesamt gekauftes Gold“ als Summe aller Käufe über die Laufzeit – das zählte bei kurzlaufenden Modellen jede Wiederanlage desselben Kapitals erneut mit und wurde durch den nicht-kumulativen „Höchster Goldbestand“ ersetzt.)*
 
 ### Monatliche Tabelle (Abschnitt 4)
 
