@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TRUST GOLD Rechner</title>
+  <style>
+    :root{--navy:#0B2A4A;--gold:#C6A64A;--gold-light:#F8F1D9;--white:#fff;--muted:#66788b}
+    *{box-sizing:border-box} body{margin:0;background:#f4f7fa;color:var(--navy);font:15px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
+    header{background:var(--navy);color:#fff;padding:28px max(20px,calc((100% - 1380px)/2));border-bottom:5px solid var(--gold)} h1{margin:0;font-size:28px} header p{margin:5px 0 0;color:#dbe5ef}
+    main{max-width:1380px;margin:24px auto;padding:0 20px}.card{background:white;border:1px solid #d9e1e8;border-radius:10px;padding:20px;box-shadow:0 2px 12px #0b2a4a10;margin-bottom:20px}
+    h2{font-size:18px;margin:0 0 14px;color:var(--navy)}.inputs{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}.prices{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:10px}
+    label{font-weight:650;font-size:13px;color:var(--navy)} input,select{display:block;width:100%;margin-top:5px;padding:9px;border:1px solid #b8c7d5;border-radius:6px;background:#fff;color:var(--navy);font:inherit}input:focus,select:focus{outline:3px solid #c6a64a55;border-color:var(--gold)}
+    .hint{color:var(--muted);font-size:13px}.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}.kpi{background:var(--gold-light);padding:13px;border-left:4px solid var(--gold);border-radius:6px}.kpi span{display:block;color:#657080;font-size:12px}.kpi strong{font-size:19px}
+    .table-wrap{overflow:auto;max-height:65vh;border:1px solid #d9e1e8;border-radius:8px}table{border-collapse:collapse;width:max-content;min-width:100%;font-size:13px}th{position:sticky;top:0;background:var(--navy);color:#fff;text-align:right;padding:10px;white-space:nowrap}th:first-child,th:nth-child(2),th:nth-child(3){text-align:left}td{padding:8px 10px;border-bottom:1px solid #e6ecf1;text-align:right;white-space:nowrap}td:first-child,td:nth-child(2),td:nth-child(3){text-align:left}tr:nth-child(even){background:#f8fafc}.model-m1{color:#8b6914;font-weight:700}.model-m2{color:#1565a8;font-weight:700}.model-m3{color:#4f398a;font-weight:700}details summary{cursor:pointer;font-weight:700;color:var(--navy)}.note{background:#fff7dc;border-left:4px solid var(--gold);padding:12px;border-radius:4px}
+    @media(max-width:700px){main{padding:0 12px}.card{padding:15px}header{padding:20px 12px}}
+  </style>
+</head>
+<body><header><h1>TRUST GOLD Rechner</h1><p>Monatliche Rechenhilfe für rabattierten physischen Goldkauf</p></header>
+<main>
+  <section class="card"><h2>1. Plan & Strategie</h2><div class="inputs">
+    <label>Startkapital (€)<input id="capital" type="number" min="0" value="10000"></label>
+    <label>Monatliches Nachschießen (€)<input id="monthly" type="number" min="0" value="0"></label>
+    <label>Planungsdauer (Monate)<input id="duration" type="number" min="1" max="120" value="36"></label>
+    <label>Goldpreissteigerung p.a. (%)<input id="growth" type="number" min="0" step="0.1" value="0"></label>
+    <label>Startmonat<input id="start" type="month" value="2026-08"></label>
+    <label>Strategie<select id="strategy"><option value="c321">Kaskade: 2 Jahre → 1 Jahr → Sofortrabatt</option><option value="c31">Kaskade: 2 Jahre → Sofortrabatt</option><option value="c21">Kaskade: 1 Jahr → Sofortrabatt</option><option value="m3">Nur Modell: 2 Jahre</option><option value="m2">Nur Modell: 1 Jahr</option><option value="m1">Nur Modell: Sofortrabatt</option></select></label>
+  </div><p class="hint">Kaskaden wechseln nur zwischen den in ihrem Namen genannten Modellen. Einzelstrategien nutzen ausschließlich das gewählte Modell. Restbetrag bleibt auf dem Verrechnungskonto. Die Goldpreissteigerung wird linear auf Monatsbasis gerechnet.</p></section>
+  <section class="card"><h2>2. Preise je Barren</h2><p class="hint">Verkaufspreis = Listenpreis vor Rabatt. Beim Sofortrabatt wird er auch für den Rückkauf verwendet. Bei den 12-/24-Monatsmodellen wird der Ankaufspreis verwendet. Beide Preise sind editierbar.</p><div id="prices" class="prices"></div></section>
+  <section class="card"><h2>3. Ergebnis</h2><div id="summary" class="summary"></div></section>
+  <section class="card"><h2>4. Monatlicher Plan</h2><div class="table-wrap"><table><thead><tr><th>Monat</th><th>Datum</th><th>Aktives Modell</th><th>Verfügbar vor Kauf</th><th>Nachschuss</th><th>Rabattgutschrift<br><small>(sofort wieder anlegbar)</small></th><th>Ankaufserlös bei Fälligkeit</th><th>Kaufbetrag dieses Monats</th><th>Fälligkeitsmonat</th><th>Saldo Verrechnungskonto</th><th>1 g</th><th>2 g</th><th>5 g</th><th>10 g</th><th>20 g</th><th>50 g</th><th>100 g</th><th>250 g</th><th>500 g</th><th>1 kg</th><th>In diesem Monat gekauft (g)</th><th>Gold in laufenden Verträgen (g)</th><th>Geschätzter Goldwert (€)</th></tr></thead><tbody id="rows"></tbody></table></div></section>
+  <section class="card note"><details><summary>Logik & wichtige Annahmen</summary><p><b>Modell 1:</b> Der Kaufpreis wird bei Vertragsabschluss um 8 % reduziert; deshalb kann der verfügbare Betrag mehr Barren kaufen. Laufzeit: 2 Monate.</p><p><b>Modell 2:</b> 3 % Rabattgutschrift pro Monat für 12 Monate. <b>Modell 3:</b> 4 % pro Monat für 24 Monate. Die Gutschrift wird im jeweiligen Monat direkt wieder angelegt, sobald sie für mindestens 1 g reicht.</p><p><b>Kapital nach Ablauf</b> ist der zum Ende der gewählten Planung verfügbare Geldbetrag nach den rechnerischen Ankäufen. Bei Fälligkeit verkauft der Rechner die Barren zum eingegebenen Ankaufspreis, hochgerechnet mit der Preissteigerung. Laut Quelle ist der Ankauf ein unverbindliches Angebot und kein Anspruch. Keine Finanz- oder Vertragsberatung.</p></details></section>
+</main>
+<script>
+const grams=[1,2,5,10,20,50,100,250,500,1000], defaults=[132.32,263.37,655.23,1304.11,2595.49,6456.92,12882.04,32125.58,64092.11,127866.15];
+const euro=n=>new Intl.NumberFormat('de-AT',{style:'currency',currency:'EUR'}).format(n), number=n=>new Intl.NumberFormat('de-AT',{maximumFractionDigits:2}).format(n);
+const p=document.querySelector('#prices');
+p.innerHTML=grams.map((g,i)=>`<label>${g===1000?'1 kg':g+' g'} Verkaufspreis (€)<input class="buy" type="number" min="0" step="0.01" value="${defaults[i]}"></label><label>${g===1000?'1 kg':g+' g'} Ankaufspreis (€)<input class="sell" type="number" min="0" step="0.01" value="${defaults[i]}"></label>`).join('');
+function plan(){
+ const cap=+capital.value||0, monthly=+document.querySelector('#monthly').value||0, duration=Math.max(1,Math.min(120,+document.querySelector('#duration').value||1)), growth=(+document.querySelector('#growth').value||0)/100;
+ const buy=[...document.querySelectorAll('.buy')].map(x=>+x.value||0),sell=[...document.querySelectorAll('.sell')].map(x=>+x.value||0),strategy=document.querySelector('#strategy').value,start=document.querySelector('#start').value+'-01';
+ const contracts=[],out=[];let balance=0,totalRebate=0,totalSale=0;
+ for(let m=0;m<=duration;m++){
+   const rebate=contracts.filter(c=>m>c.month&&m<=c.due).reduce((s,c)=>s+c.amount*c.rate,0);
+   const multiplier=1+growth*(m/12);let sale=0;contracts.filter(c=>c.due===m).forEach(c=>sale+=c.units.reduce((s,u,i)=>s+u*(c.model==='m1'?buy[i]:sell[i])*multiplier,0));
+   const contribution=m===0?cap:monthly;let available=balance+contribution+rebate+sale;
+   const monthsRemaining=duration-m;
+   let model=strategy==='c321'?(monthsRemaining>=24?'m3':monthsRemaining>=12?'m2':monthsRemaining>=2?'m1':null):strategy==='c31'?(monthsRemaining>=24?'m3':monthsRemaining>=2?'m1':null):strategy==='c21'?(monthsRemaining>=12?'m2':monthsRemaining>=2?'m1':null):strategy;
+   const terms={m1:2,m2:12,m3:24},rates={m1:0,m2:.03,m3:.04},discount=model==='m1'?.08:0;
+   if(model&&m+terms[model]>duration) model=null;
+   const effective=buy.map(x=>x*(1-(model==='m1'?.08:0))),units=Array(10).fill(0),left=model?available:0;
+   let remaining=left;for(let i=9;i>=0;i--){if(effective[i]>0){units[i]=Math.floor((remaining+1e-8)/effective[i]);remaining-=units[i]*effective[i];}}
+   const amount=units.reduce((s,u,i)=>s+u*effective[i],0),gold=units.reduce((s,u,i)=>s+u*grams[i],0); balance=available-amount;
+   if(model) contracts.push({month:m,due:m+terms[model],amount,rate:rates[model],units,model}); totalRebate+=rebate;totalSale+=sale;
+   const activeNow=contracts.filter(c=>c.due>m), activeGoldNow=activeNow.reduce((s,c)=>s+c.units.reduce((subtotal,u,i)=>subtotal+u*grams[i],0),0), activeValueNow=activeNow.reduce((s,c)=>s+c.units.reduce((subtotal,u,i)=>subtotal+u*(c.model==='m1'?buy[i]:sell[i])*multiplier,0),0);
+   const date=new Date(start);date.setMonth(date.getMonth()+m);out.push({m,date,model,available,contribution,rebate,sale,amount,due:model?m+terms[model]:null,balance,units,gold,activeGoldNow,activeValueNow});
+ }
+ const final=out[out.length-1], ownCapital=cap+monthly*duration, finalCapital=balance+final.activeValueNow, totalRatio=ownCapital?finalCapital/ownCapital:0, cashRatio=ownCapital?balance/ownCapital:0;
+ summary.innerHTML=[['Guthaben nach Ablauf',euro(balance)],['Gold in laufenden Verträgen',number(final.activeGoldNow)+' g'],['Geschätzter Goldwert',euro(final.activeValueNow)],['Kapital gesamt nach Ablauf',euro(finalCapital)],['Eigenkapital eingezahlt',euro(ownCapital)],['Gesamtwert / eingesetztes Kapital',number(totalRatio*100)+' %'],['Guthaben / eingesetztes Kapital',number(cashRatio*100)+' %'],['Wiederverwendete Rabattgutschriften',euro(totalRebate)]].map(x=>`<div class="kpi"><span>${x[0]}</span><strong>${x[1]}</strong></div>`).join('');
+ rows.innerHTML=out.map(x=>`<tr><td>${x.m}</td><td>${x.date.toLocaleDateString('de-AT',{month:'short',year:'numeric'})}</td><td class="model-${x.model||'none'}">${x.model==='m1'?'Modell 1 – Sofort':x.model==='m2'?'Modell 2 – 12 M.':x.model==='m3'?'Modell 3 – 24 M.':'Kein neuer Vertrag'}</td><td>${euro(x.available)}</td><td>${euro(x.contribution)}</td><td>${euro(x.rebate)}</td><td>${euro(x.sale)}</td><td>${euro(x.amount)}</td><td>${x.due??'–'}</td><td>${euro(x.balance)}</td>${x.units.map(u=>`<td>${u}</td>`).join('')}<td>${number(x.gold)}</td><td>${number(x.activeGoldNow)}</td><td>${euro(x.activeValueNow)}</td></tr>`).join('');
+}
+document.querySelectorAll('input,select').forEach(x=>x.addEventListener('input',plan));plan();
+</script></body></html>
