@@ -59,7 +59,7 @@ function plan(){
    if(model) contracts.push({month:m,due:m+terms[model],amount,rate:rates[model],units,model}); totalRebate+=rebate;totalSale+=sale;
    const activeNow=contracts.filter(c=>c.due>m), activeGoldNow=activeNow.reduce((s,c)=>s+c.units.reduce((subtotal,u,i)=>subtotal+u*grams[i],0),0), activeValueNow=activeNow.reduce((s,c)=>s+c.units.reduce((subtotal,u,i)=>subtotal+u*(c.model==='m1'?buy[i]:sell[i])*multiplier,0),0);
    const activeGoldByModel={m1:0,m2:0,m3:0};activeNow.forEach(c=>activeGoldByModel[c.model]+=c.units.reduce((s,u,i)=>s+u*grams[i],0));
-   const date=new Date(start);date.setMonth(date.getMonth()+m);out.push({m,date,model,available,contribution,rebate,sale,amount,due:model?m+terms[model]:null,balance,units,gold,activeGoldNow,activeValueNow,activeGoldByModel});
+   const date=new Date(start);date.setMonth(date.getMonth()+m);out.push({m,date,model,available,contribution:m===0?0:contribution,rebate,sale,amount,due:model?m+terms[model]:null,balance,units,gold,activeGoldNow,activeValueNow,activeGoldByModel});
    contracts=activeNow;
  }
  const ownCapital=cap+monthly*duration, renditeRatio=ownCapital?balance/ownCapital:0;
