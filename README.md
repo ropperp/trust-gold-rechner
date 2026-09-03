@@ -30,7 +30,7 @@ Der Rechner simuliert Monat für Monat, wie ein Sparplan in physisches Gold (in 
 |---|---|
 | Startkapital | Einmalzahlung im ersten Monat (Monat 0) |
 | Monatliches Nachschießen | Zusätzlicher Betrag, der ab Monat 1 jeden Monat eingezahlt wird |
-| Planungsdauer | Anzahl der simulierten Monate |
+| Planungsdauer | Anzahl der simulierten Monate, 1–360 (30 Jahre) |
 | Goldpreissteigerung p.a. | Jährliche Preisänderung, wird **linear** auf Monatsbasis umgerechnet (`multiplier = max(0, 1 + growth × (Monat/12))`). Auch **negative Werte** (z. B. `-20` für ein Szenario mit −20 % p.a.) sind erlaubt, um einen sinkenden Goldpreis durchzurechnen; der Multiplikator ist bei 0 nach unten begrenzt, damit auch bei starkem, lang anhaltendem Rückgang keine negativen Preise entstehen |
 | Startmonat | Kalendermonat von Monat 0 |
 | Strategie | Siehe unten |
@@ -104,6 +104,8 @@ Bei einer genauen Durchsicht der Rechenlogik wurden folgende Punkte korrigiert:
 4. **Erklärender Hinweis zur zusätzlichen Zeile.** Die Tabelle hatte schon immer eine Zeile mehr als die eingegebene Planungsdauer (Monat 0 bis Monat *Planungsdauer*), weil der letzte Monat nur noch Fälligkeiten abrechnet. Das ist rechnerisch beabsichtigt, wurde aber nirgends erklärt – jetzt gibt es dazu einen Hinweistext direkt über der Tabelle.
 
 **Unverändert, aber zur Kenntnisnahme:** Modell 1 (Sofortrabatt) kauft beim Rückkauf weiterhin zum Verkaufspreis (nicht zum Ankaufspreis) – das wurde bewusst so belassen, da dies laut Rückmeldung den tatsächlichen Konditionen entspricht. Die Kauf-Reihenfolge „größte Barrengröße zuerst“ ist ein bewusster, einfacher Greedy-Ansatz; er ist in der Praxis meist optimal (größere Barren sind pro Gramm günstiger), garantiert aber rechnerisch nicht in jedem Fall die maximale Grammzahl für den eingesetzten Betrag.
+
+5. **Planungsdauer auf 360 Monate (30 Jahre) erweitert** (vorher 120). Dabei zeigte sich: Bei sehr langen Laufzeiten verbringen die Kaskaden-Strategien einen Großteil der Zeit im Sofortrabatt-Modell (Modell 1), das alle 2 Monate erneut 8 % Rabatt gewährt und zum vollen Verkaufspreis zurückkauft (Punkt „Modell 1 Rückkauf“ oben). Wiederholt sich dieser Zyklus über Jahrzehnte, wirkt er wie Zinseszins und kann rechnerisch außergewöhnlich hohe, praxisfern wirkende Endsummen ergeben (Beispielrechnung: 200 €/Monat über 216 Monate ergab rechnerisch über 21 Mio. € Endkapital). Das ist keine neue Änderung an der Berechnung, sondern eine Konsequenz der bereits bestätigten Modell-1-Regel, die bei kurzen Laufzeiten kaum auffällt und erst bei sehr langen Laufzeiten sichtbar wird. Ein entsprechender Hinweis wurde im Info-Kasten der Seite ergänzt; ob der Sofortrabatt in der Praxis beliebig oft hintereinander nutzbar ist, sollte bei sehr langen Laufzeiten separat geprüft werden.
 
 ## Hinweise zu späteren Anpassungen
 
