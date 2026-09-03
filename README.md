@@ -9,6 +9,8 @@ Live-Demo (nach Aktivierung von GitHub Pages, siehe unten):
 
 Einfach `index.html` im Browser öffnen – es werden keine externen Bibliotheken oder Server benötigt, alles (HTML, CSS, JavaScript) steckt in der einen Datei. Jede Eingabeänderung berechnet den gesamten Plan sofort neu.
 
+Alle Eingaben (Plan-Parameter, Strategie, alle Barrenpreise) werden automatisch im `localStorage` des Browsers gespeichert und beim nächsten Aufruf der Seite wiederhergestellt – auch nach Schließen des Tabs oder Browsers. Das ist rein clientseitig (kein Server, keine Cookies im eigentlichen Sinn) und pro Browser/Gerät getrennt. Über den Link „Auf Standardwerte zurücksetzen“ am Ende von Abschnitt 1 wird der gespeicherte Stand gelöscht und die Seite neu geladen.
+
 ## GitHub Pages aktivieren
 
 Damit die Seite unter einer öffentlichen URL erreichbar ist:
@@ -86,7 +88,7 @@ Für jeden Monat `m` von `0` bis `duration`:
 - **Gesamter Rückkaufserlös**: Summe aller Ankaufserlöse aus fällig gewordenen Verträgen über die gesamte Laufzeit (das ist ein reiner Geldfluss über die Zeit, keine Bestandsgröße – hier ist eine Summe sinnvoll).
 - **Wiederverwendete Rabattgutschriften**: Summe aller monatlichen Rabattgutschriften aus Modell 2/3 über die gesamte Laufzeit (ebenfalls ein Geldfluss, keine Bestandsgröße).
 - **Eigenkapital eingezahlt**: Startkapital + (monatliches Nachschießen × Planungsdauer) – die Summe aller eigenen Einzahlungen.
-- **Endkapital / eingesetztes Kapital**: Guthaben nach Ablauf im Verhältnis zum eingezahlten Eigenkapital, in Prozent.
+- **Endkapital / eingesetztes Kapital**: Guthaben nach Ablauf im Verhältnis zum eingezahlten Eigenkapital, in Prozent, zusätzlich als „-fache“ (z. B. „336,56 % ≈ 3,37-fache“) darunter – dieselbe Kennzahl, nur als Vervielfachung statt Prozent, für alle, die das lieber so lesen.
 
 *(Frühere Versionen zeigten zusätzlich „Gold in laufenden Verträgen“, „Geschätzter Goldwert“, „Kapital gesamt nach Ablauf“ und „Gesamtwert / eingesetztes Kapital“ – diese vier Werte waren durch die oben beschriebene Fälligkeits-Regel strukturell immer 0 bzw. exakte Duplikate von „Guthaben nach Ablauf“ und wurden deshalb entfernt. Eine weitere Zwischenversion zeigte „Insgesamt gekauftes Gold“ als Summe aller Käufe über die Laufzeit – das zählte bei kurzlaufenden Modellen jede Wiederanlage desselben Kapitals erneut mit und wurde durch den nicht-kumulativen „Höchster Goldbestand“ ersetzt.)*
 

@@ -27,7 +27,7 @@
     <label>Goldpreissteigerung p.a. (%)<input id="growth" type="number" step="0.1" value="0"></label>
     <label>Startmonat<input id="start" type="month" value="2026-08"></label>
     <label>Strategie<select id="strategy"><option value="c321">Kaskade: 2 Jahre → 1 Jahr → Sofortrabatt</option><option value="c31">Kaskade: 2 Jahre → Sofortrabatt</option><option value="c21">Kaskade: 1 Jahr → Sofortrabatt</option><option value="m3">Nur Modell: 2 Jahre</option><option value="m2">Nur Modell: 1 Jahr</option><option value="m1">Nur Modell: Sofortrabatt</option></select></label>
-  </div><p class="hint">Kaskaden wechseln nur zwischen den in ihrem Namen genannten Modellen. Einzelstrategien nutzen ausschließlich das gewählte Modell. Restbetrag bleibt auf dem Verrechnungskonto. Die Goldpreissteigerung wird linear auf Monatsbasis gerechnet (negative Werte für ein Szenario mit sinkendem Goldpreis sind möglich, z. B. −20 für −20 % p.a.). Planungsdauer bis 1200 Monate (100 Jahre) möglich.</p></section>
+  </div><p class="hint">Kaskaden wechseln nur zwischen den in ihrem Namen genannten Modellen. Einzelstrategien nutzen ausschließlich das gewählte Modell. Restbetrag bleibt auf dem Verrechnungskonto. Die Goldpreissteigerung wird linear auf Monatsbasis gerechnet (negative Werte für ein Szenario mit sinkendem Goldpreis sind möglich, z. B. −20 für −20 % p.a.). Planungsdauer bis 1200 Monate (100 Jahre) möglich. Alle Eingaben werden automatisch in diesem Browser gespeichert und beim nächsten Aufruf wiederhergestellt. <button type="button" id="resetBtn" style="border:none;background:none;color:var(--navy);text-decoration:underline;cursor:pointer;font:inherit;padding:0">Auf Standardwerte zurücksetzen</button></p></section>
   <section class="card"><h2>2. Preise je Barren</h2><p class="hint">Verkaufspreis = Listenpreis vor Rabatt. Beim Sofortrabatt wird er auch für den Rückkauf verwendet. Bei den 12-/24-Monatsmodellen wird der (niedrigere) Ankaufspreis verwendet – die Standardwerte enthalten bereits den echten Spread zwischen Verkaufs- und Ankaufspreis. Beide Preise sind editierbar.</p><div id="prices" class="prices"></div></section>
   <section class="card"><h2>3. Ergebnis</h2><div id="summary" class="summary"></div><p class="hint" id="summaryBreakdown" style="margin-top:12px"></p></section>
   <section class="card"><h2>4. Monatlicher Plan</h2><p class="hint">Die Tabelle zeigt Monat 0 bis Monat [Planungsdauer] – also einen Monat mehr als die eingegebene Planungsdauer. Im letzten Monat wird kein neuer Vertrag mehr abgeschlossen, es werden nur noch fällige Rückkäufe und Gutschriften verbucht, damit das Endergebnis vollständig abgerechnet ist.</p><div class="table-wrap"><table><thead><tr><th>Monat</th><th>Datum</th><th>Aktives Modell</th><th>Verfügbar vor Kauf</th><th>Nachschuss</th><th>Rabattgutschrift<br><small>(sofort wieder anlegbar)</small></th><th>Ankaufserlös bei Fälligkeit</th><th>Kaufbetrag dieses Monats</th><th>Fälligkeitsmonat</th><th>Saldo Verrechnungskonto</th><th>1 g</th><th>2 g</th><th>5 g</th><th>10 g</th><th>20 g</th><th>50 g</th><th>100 g</th><th>250 g</th><th>500 g</th><th>1 kg</th><th>In diesem Monat gekauft (g)</th><th>Gold in laufenden Verträgen (g)</th><th>Geschätzter Goldwert (€)</th></tr></thead><tbody id="rows"></tbody></table></div></section>
@@ -65,10 +65,38 @@ function plan(){
  const ownCapital=cap+monthly*duration, renditeRatio=ownCapital?balance/ownCapital:0;
  const peakGold=out.reduce((max,x)=>Math.max(max,x.activeGoldNow),0);
  const peakByModel={m1:0,m2:0,m3:0};out.forEach(x=>['m1','m2','m3'].forEach(k=>peakByModel[k]=Math.max(peakByModel[k],x.activeGoldByModel[k])));
- summary.innerHTML=[['Guthaben nach Ablauf',euro(balance)],['Höchster Goldbestand',number(peakGold)+' g'],['Gesamter Rückkaufserlös',euro(totalSale)],['Wiederverwendete Rabattgutschriften',euro(totalRebate)],['Eigenkapital eingezahlt',euro(ownCapital)],['Endkapital / eingesetztes Kapital',number(renditeRatio*100)+' %']].map(x=>`<div class="kpi"><span>${x[0]}</span><strong>${x[1]}</strong></div>`).join('');
+ summary.innerHTML=[['Guthaben nach Ablauf',euro(balance)],['Höchster Goldbestand',number(peakGold)+' g'],['Gesamter Rückkaufserlös',euro(totalSale)],['Wiederverwendete Rabattgutschriften',euro(totalRebate)],['Eigenkapital eingezahlt',euro(ownCapital)],['Endkapital / eingesetztes Kapital',number(renditeRatio*100)+' %<br><span style="font-size:12px;font-weight:600;color:var(--muted)">≈ '+number(renditeRatio)+'-fache</span>']].map(x=>`<div class="kpi"><span>${x[0]}</span><strong>${x[1]}</strong></div>`).join('');
  const modelNames={m1:'Modell 1 (Sofort)',m2:'Modell 2 (1 Jahr)',m3:'Modell 3 (2 Jahre)'}, breakdown=['m1','m2','m3'].filter(k=>peakByModel[k]>0).map(k=>`${modelNames[k]}: ${number(peakByModel[k])} g`);
  summaryBreakdown.textContent=breakdown.length?'Davon je Modell zeitgleich maximal (nicht kumuliert, da Modelle sich in Kaskaden zeitlich überlappen können): '+breakdown.join(' · '):'';
  rows.innerHTML=out.map(x=>`<tr><td>${x.m}</td><td>${x.date.toLocaleDateString('de-AT',{month:'short',year:'numeric'})}</td><td class="model-${x.model||'none'}">${x.model==='m1'?'Modell 1 – Sofort':x.model==='m2'?'Modell 2 – 12 M.':x.model==='m3'?'Modell 3 – 24 M.':'Kein neuer Vertrag'}</td><td>${euro(x.available)}</td><td>${euro(x.contribution)}</td><td>${euro(x.rebate)}</td><td>${euro(x.sale)}</td><td>${euro(x.amount)}</td><td>${x.due??'–'}</td><td>${euro(x.balance)}</td>${x.units.map(u=>`<td>${u}</td>`).join('')}<td>${number(x.gold)}</td><td>${number(x.activeGoldNow)}</td><td>${euro(x.activeValueNow)}</td></tr>`).join('');
 }
-document.querySelectorAll('input,select').forEach(x=>x.addEventListener('input',plan));plan();
+const STORAGE_KEY='trustgold-rechner-eingaben-v1';
+function saveState(){
+ try{
+  const state={
+   capital:capital.value, monthly:document.querySelector('#monthly').value, duration:document.querySelector('#duration').value,
+   growth:document.querySelector('#growth').value, start:document.querySelector('#start').value, strategy:document.querySelector('#strategy').value,
+   buy:[...document.querySelectorAll('.buy')].map(x=>x.value), sell:[...document.querySelectorAll('.sell')].map(x=>x.value)
+  };
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+ }catch(e){}
+}
+function loadState(){
+ try{
+  const raw=localStorage.getItem(STORAGE_KEY); if(!raw) return;
+  const state=JSON.parse(raw);
+  if(state.capital!=null) capital.value=state.capital;
+  if(state.monthly!=null) document.querySelector('#monthly').value=state.monthly;
+  if(state.duration!=null) document.querySelector('#duration').value=state.duration;
+  if(state.growth!=null) document.querySelector('#growth').value=state.growth;
+  if(state.start!=null) document.querySelector('#start').value=state.start;
+  if(state.strategy!=null) document.querySelector('#strategy').value=state.strategy;
+  const buys=document.querySelectorAll('.buy'),sells=document.querySelectorAll('.sell');
+  if(Array.isArray(state.buy)) state.buy.forEach((v,i)=>{if(buys[i]&&v!=null) buys[i].value=v;});
+  if(Array.isArray(state.sell)) state.sell.forEach((v,i)=>{if(sells[i]&&v!=null) sells[i].value=v;});
+ }catch(e){}
+}
+loadState();
+document.querySelectorAll('input,select').forEach(x=>x.addEventListener('input',()=>{plan();saveState();}));plan();
+document.querySelector('#resetBtn').addEventListener('click',()=>{try{localStorage.removeItem(STORAGE_KEY);}catch(e){} location.reload();});
 </script></body></html>
